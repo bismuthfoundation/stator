@@ -1,0 +1,102 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Explorer</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script >
+
+</head>
+<body>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Stator - The POC Bismuth explorer and statistics reporter</div>
+  <div class="panel-body">
+      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" >
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a href='/explorer' class='btn btn-success' role='button'>Explorer</a>
+            <a href='/difficulty' class='btn btn-info' role='button'>Difficulty</a>
+            <a href='/block_timestamps' class='btn btn-info' role='button'>Block Timestamps</a>
+            <a href='/tx_timestamps' class='btn btn-info' role='button'>Tx Timestamps</a>
+            <a href='/connections' class='btn btn-warning' role='button'>Connections</a>
+            <a href='/consensus' class='btn btn-warning' role='button'>Consensus</a>
+            <a href='/consensus_percent' class='btn btn-warning' role='button'>Consensus Percentage</a>
+            <a href='/threads' class='btn btn-warning' role='button'>Threads</a>
+            <a href='/diff_dropped' class='btn btn-danger' role='button'>Difficulty After Drop</a>
+            <a href='/block_time' class='btn btn-danger' role='button'>Block Time</a>
+            <a href='/time_to_generate' class='btn btn-danger' role='button'>Block Spacing</a>
+            <a href='/diff_adjustment' class='btn btn-danger' role='button'>Difficulty Adjustment</a>
+            <a href='/hashrate' class='btn btn-danger' role='button'>Hashrate</a>
+            <a href='/' class='btn btn-warning' role='button'>Stats</a>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Explorer</div>
+  <div class="panel-body">
+      <form action="/explorer/seek">
+        <div class="form-group">
+            <label for="queryId">Search</label>
+            <input type="text" class="form-control" name="query" id="queryId" aria-describedby="queryHelp" placeholder="Enter what you are looking for">
+            <small id="emailHelp" class="form-text text-muted">Enter block, address, txid or hash.</small>
+        </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading" >Data</div>
+  <div class="panel-body">
+
+      {%for key, value in data%}
+    <table class='table table-responsive'>
+
+        <tr bgcolor="#EAECEE">
+            <th bgcolor="#F2F4F4">Block Height</th>
+            <th bgcolor="#F2F4F4">Block Timestamp</th>
+            <th bgcolor="#F2F4F4">Miner</th>
+            <th bgcolor="#F2F4F4">Block Hash</th>
+            <th bgcolor="#F2F4F4">Reward</th>
+            <th bgcolor="#F2F4F4">Difficulty</th>
+        </tr>
+        <tr bgcolor="#EAECED">
+            <td><a href="/explorer/height/{{key}}">{{key}}</a></td>
+            <td>{{value['mining_tx']['timestamp']}}</td>
+
+
+            <td><a href="/explorer/address/{{value['mining_tx']['recipient']}}">{{value['mining_tx']['recipient']}}</a></td>
+            <td><a href="/explorer/hash/{{value['mining_tx']['block_hash']}}">{{value['mining_tx']['block_hash']}}</a></td>
+            <td>{{value['mining_tx']['reward']}}</td>
+            <td>{{value['mining_tx']['difficulty']}}</td>
+        </tr>
+            {%for transaction in value['transactions']%}
+                <th bgcolor="#F2F4F4">Transaction</th>
+                    <tr><td>Timestamp: {{transaction['timestamp']}}</td></tr>
+                    <tr><td>Address: <a href="/explorer/address/{{transaction['address']}}">{{transaction['address']}}</a></td></tr>
+                    <tr><td>Recipient: <a href="/explorer/address/{{transaction['recipient']}}">{{transaction['recipient']}}</a></td></tr>
+                    <tr><td>Amount: {{transaction['amount']}}</td></tr>
+                    <tr><td>Fee: {{transaction['fee']}}</td></tr>
+                    <tr><td>Operation: {{transaction['operation']}}</td></tr>
+                    <tr><td>Data: {{transaction['openfield']}}</td></tr>
+                    <tr><td>Txid:  <a href="/explorer/txid/{{transaction['txid']}}">{{transaction['txid']}}</a></td></tr>
+
+            {%end%}
+
+
+    </table>
+    {%end%}
+
+    </div>
+</div>
+
+</body>
+
+
+</html>
