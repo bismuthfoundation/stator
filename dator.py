@@ -1,18 +1,17 @@
 import json
 import socks
-from bisbasic.connections import send, receive
+from bismuthclient.rpcconnections import Connection
 from bisbasic.essentials import format_raw_tx
 from diff_simple import difficulty
 import time
 
 class Socket():
-    def __init__(self):
+    def __init__(self):        
         self.connect()
 
     def connect(self):
         try:
-            self.s = socks.socksocket()
-            self.s.connect(("127.0.0.1", 5658))
+            self.connection = Connection(("127.0.0.1", 5658))
         except:
             raise
 
@@ -21,10 +20,10 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "api_gettransaction")
-                send(self.s, txid)
+                self.connection._send("api_gettransaction")
+                self.connection._send(txid)
 
-                reply = receive(self.s)
+                reply = self.connection._receive()
                 if not reply == "*":
                     responded = True
                     return reply
@@ -36,12 +35,12 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "api_getaddressrange")
-                send(self.s, address)
-                send(self.s, 0)
-                send(self.s, 100)
+                self.connection._send("api_getaddressrange")
+                self.connection._send(address)
+                self.connection._send(0)
+                self.connection._send(100)
 
-                reply = receive(self.s)
+                reply = self.connection._receive()
                 if not reply == "*":
                     responded = True
                     return reply
@@ -53,8 +52,8 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "statusjson")
-                reply = receive(self.s, timeout=1)
+                self.connection._send("statusjson")
+                reply = self.connection._receive()
                 if not reply == "*":
                     responded = True
                     return reply
@@ -66,9 +65,9 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "api_getblockfromhash")
-                send(self.s, hash)
-                reply = receive(self.s, timeout=1)
+                self.connection._send("api_getblockfromhash")
+                self.connection._send(hash)
+                reply = self.connection._receive()
                 if not reply == "*":
                     responded = True
                     return reply
@@ -80,9 +79,9 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "api_getblockfromheight")
-                send(self.s, height)
-                reply = receive(self.s, timeout=1)
+                self.connection._send("api_getblockfromheight")
+                self.connection._send(height)
+                reply = self.connection._receive()
                 if not reply == "*":
                     responded = True
                     return reply
@@ -95,11 +94,11 @@ class Socket():
         responded = False
         while not responded:
             try:
-                send(self.s, "api_getblockrange")
-                send(self.s, block)
-                send(self.s, limit)
+                self.connection._send("api_getblockrange")
+                self.connection._send(block)
+                self.connection._send(limit)
 
-                reply = receive(self.s, timeout=1)
+                reply = self.connection._receive()
 
                 if not reply == "*":
                     responded = True
