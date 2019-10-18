@@ -366,35 +366,6 @@ class diff_droppedHandler(tornado.web.RequestHandler):
                     y_label="Difficulty After Readjustment",
                     x_label="Block")
 
-class block_timeHandler(tornado.web.RequestHandler):
-    def initialize(self, updater):
-        self.updater = updater
-        #self.updater.update()
-
-    def get(self):
-        #call fetcher
-        #self.updater.update()
-
-        #render
-
-
-        y_axis = []
-        x_axis = []
-
-        for item in self.updater.history.diffs:
-            for block, difficulty in item.items():
-                x_axis.append(int(block))
-
-        for item in self.updater.history.diffs:
-            for block, difficulty in item.items():
-                y_axis.append(difficulty['block_time'])
-
-        self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
-                    y_label="Block Time",
-                    x_label="Block")
-
 class time_to_generateHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
@@ -509,7 +480,6 @@ def make_app():
         (r"/consensus_percent", consensus_percentHandler, {'updater': updater}),
         (r"/threads", threadsHandler, {'updater': updater}),
         (r"/diff_dropped", diff_droppedHandler, {'updater': updater}),
-        (r"/block_time", block_timeHandler, {'updater': updater}),
         (r"/time_to_generate", time_to_generateHandler, {'updater': updater}),
         (r"/diff_adjustment", diff_adjustmentHandler, {'updater': updater}),
         (r"/hashrate", hashrateHandler, {'updater': updater}),
