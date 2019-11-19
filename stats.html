@@ -78,7 +78,7 @@
 	<td>{{stata[-1][0]['connections_list']}}</td>
 </tr>
 <tr>
-	<td>Connections count</td>
+	<td>Connection count</td>
 	<td>{{len(stata[-1][0]['connections_list'])}}</td>
 </tr>
 <tr>
@@ -88,6 +88,16 @@
 <tr>
 	<td>Server timestamp</td>
 	<td>{{stata[-1][0]['server_timestamp']}}</td>
+</tr>
+
+<tr>
+	<td>Server CPU used</td>
+	<td>{{stata[-1][0]['local_data']['cpu_usage']}}%</td>
+</tr>
+
+<tr>
+	<td>Server memory used</td>
+	<td>{{stata[-1][0]['local_data']['memory']}}%</td>
 </tr>
 
 </table>

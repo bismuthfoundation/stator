@@ -1,8 +1,7 @@
 import json
-
 from bismuthclient.rpcconnections import Connection
-
 from diff_simple import difficulty
+import psutil
 
 
 class Socket:
@@ -185,6 +184,12 @@ class Updater:
             self.socket = Socket()
 
             new_data = self.status.refresh(self.socket)
+
+
+            local_data = {}
+            local_data["memory"] = dict(psutil.virtual_memory()._asdict())["percent"]
+            local_data["cpu_usage"] = psutil.cpu_percent(3)
+            new_data["local_data"] = local_data
 
             self.history.stata.append([new_data])
             self.last_block = new_data["blocks"]
