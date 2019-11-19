@@ -1,21 +1,23 @@
-import json
+import tornado.ioloop
+import time
+
 import tornado.ioloop
 import tornado.web
-import dator
 import threading
-import time
+import dator
+
 
 class seekHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self, data):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        query = seekHandler.get_argument(self,"query")
-        print (f"Query: {query}, {type(query)}, {len(query)}")
+        query = seekHandler.get_argument(self, "query")
+        print(f"Query: {query}, {type(query)}, {len(query)}")
 
         socket = dator.Socket()
 
@@ -23,7 +25,6 @@ class seekHandler(tornado.web.RequestHandler):
             if query.strip() == "":
                 self.write("Nothing entered")
                 return
-
 
             if query.isnumeric():
 
@@ -41,19 +42,18 @@ class seekHandler(tornado.web.RequestHandler):
                 if result:
                     print(result)
                     self.render("address.html",
-                            data=result)
+                                data=result)
 
                 result = socket.get_address(query)
                 if result:
                     print(result)
                     self.render("address.html",
-                            data=result)
+                                data=result)
 
         except Exception as e:
             self.write(f"Request not recognized ({e})")
 
-
-        #render
+        # render
         """
         socket = dator.Socket()
         result = socket.get_blockfromheight(height)
@@ -61,100 +61,105 @@ class seekHandler(tornado.web.RequestHandler):
         self.render("address.html",
                     data = result)
         """
+
+
 class heightHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self, height):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         socket = dator.Socket()
         result = socket.get_blockfromheight(height)
 
         self.render("address.html",
-                    data = result)
+                    data=result)
+
 
 class txidHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self, txid):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         socket = dator.Socket()
         result = socket.get_txid(txid)
 
         self.render("txid.html",
-                    data = result)
+                    data=result)
+
 
 class hashHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self, hash):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         socket = dator.Socket()
         result = socket.get_blockfromhash(hash)
 
         self.render("address.html",
-                    data = result)
+                    data=result)
+
 
 class addressHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self, address):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         socket = dator.Socket()
         result = socket.get_address(address)
 
-
         self.render("address.html",
-                    data = result)
+                    data=result)
+
 
 class blockdisplayHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
-
+        # render
 
         self.render("explorer.html",
-                    data = self.updater.history.blocks.items())
+                    data=self.updater.history.blocks.items())
+
 
 class difficultyHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         y_axis = []
         x_axis = []
@@ -167,8 +172,8 @@ class difficultyHandler(tornado.web.RequestHandler):
             y_axis.append(float(data['mining_tx']['difficulty']))
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Difficulty",
                     x_label="Block")
 
@@ -176,13 +181,13 @@ class difficultyHandler(tornado.web.RequestHandler):
 class block_timestampsHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         y_axis = []
         x_axis = []
@@ -192,21 +197,22 @@ class block_timestampsHandler(tornado.web.RequestHandler):
             y_axis.append(float(data['mining_tx']['timestamp']))
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Timestamp",
                     x_label="Block")
+
 
 class tx_timestampsHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         y_axis = []
         x_axis = []
@@ -220,21 +226,22 @@ class tx_timestampsHandler(tornado.web.RequestHandler):
                 y_axis.append(float(transaction['timestamp']))
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Timestamp",
                     x_label="Block")
+
 
 class connectionsHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         y_axis = []
         x_axis = []
@@ -247,22 +254,22 @@ class connectionsHandler(tornado.web.RequestHandler):
                 y_axis.append(subitem['connections'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Connections",
                     x_label="Interval")
+
 
 class consensusHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
-        
+        # render
 
         y_axis = []
         x_axis = []
@@ -275,22 +282,22 @@ class consensusHandler(tornado.web.RequestHandler):
                 y_axis.append(subitem['consensus'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Consensus",
                     x_label="Interval")
+
 
 class consensus_percentHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
-        
+        # render
 
         y_axis = []
         x_axis = []
@@ -303,8 +310,8 @@ class consensus_percentHandler(tornado.web.RequestHandler):
                 y_axis.append(subitem['consensus_percent'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Consensus Percentage",
                     x_label="Interval")
 
@@ -312,15 +319,13 @@ class consensus_percentHandler(tornado.web.RequestHandler):
 class threadsHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-
-        #render
-        
+        # render
 
         y_axis = []
         x_axis = []
@@ -333,21 +338,22 @@ class threadsHandler(tornado.web.RequestHandler):
                 y_axis.append(subitem['threads'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Threads",
                     x_label="Interval")
+
 
 class diff_droppedHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
+        # render
 
         y_axis = []
         x_axis = []
@@ -361,22 +367,22 @@ class diff_droppedHandler(tornado.web.RequestHandler):
                 y_axis.append(difficulty['diff_dropped'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Difficulty After Readjustment",
                     x_label="Block")
+
 
 class time_to_generateHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
-        
+        # render
 
         y_axis = []
         x_axis = []
@@ -390,22 +396,22 @@ class time_to_generateHandler(tornado.web.RequestHandler):
                 y_axis.append(difficulty['time_to_generate'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
+                    y_axis=y_axis,
+                    x_axis=x_axis,
                     y_label="Seconds",
                     x_label="Block")
+
 
 class diff_adjustmentHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
-        #render
-        
+        # render
 
         y_axis = []
         x_axis = []
@@ -419,19 +425,20 @@ class diff_adjustmentHandler(tornado.web.RequestHandler):
                 y_axis.append(difficulty['diff_adjustment'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
-                    y_label = "Difficulty Readjustment",
-                    x_label = "Block")
+                    y_axis=y_axis,
+                    x_axis=x_axis,
+                    y_label="Difficulty Readjustment",
+                    x_label="Block")
+
 
 class hashrateHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
+        # call fetcher
+        # self.updater.update()
 
         y_axis = []
         x_axis = []
@@ -445,24 +452,25 @@ class hashrateHandler(tornado.web.RequestHandler):
                 y_axis.append(difficulty['hashrate'])
 
         self.render("chart.html",
-                    y_axis = y_axis,
-                    x_axis = x_axis,
-                    y_label = "Hashrate",
-                    x_label = "Block")
+                    y_axis=y_axis,
+                    x_axis=x_axis,
+                    y_label="Hashrate",
+                    x_label="Block")
+
 
 class statsHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
         self.updater = updater
-        #self.updater.update()
+        # self.updater.update()
 
     def get(self):
-        #call fetcher
-        #self.updater.update()
-
+        # call fetcher
+        # self.updater.update()
 
         self.render("stats.html",
-                    stata = self.updater.history.stata
+                    stata=self.updater.history.stata
                     )
+
 
 def make_app():
     return tornado.web.Application([
@@ -488,15 +496,15 @@ def make_app():
 
     ])
 
+
 class ThreadedClient(threading.Thread):
     def __init__(self, updater):
         threading.Thread.__init__(self)
 
     def run(self):
-       while True:
-           updater.update()
-           time.sleep(360)
-
+        while True:
+            updater.update()
+            time.sleep(360)
 
 
 if __name__ == "__main__":
@@ -505,9 +513,6 @@ if __name__ == "__main__":
     background = ThreadedClient(updater)
     background.start()
 
-
     app = make_app()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
-
-

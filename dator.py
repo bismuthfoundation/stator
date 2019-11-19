@@ -1,12 +1,12 @@
 import json
-import socks
-from bismuthclient.rpcconnections import Connection
-from bisbasic.essentials import format_raw_tx
-from diff_simple import difficulty
-import time
 
-class Socket():
-    def __init__(self):        
+from bismuthclient.rpcconnections import Connection
+
+from diff_simple import difficulty
+
+
+class Socket:
+    def __init__(self):
         self.connect()
 
     def connect(self):
@@ -109,12 +109,11 @@ class Socket():
                 self.connect()
 
 
-class Status():
+class Status:
     def refresh(self, socket):
-
         self.status = socket.get_status()
 
-        #non-chartable instants
+        # non-chartable instants
         self.protocolversion = self.status['protocolversion']
         self.address = self.status['address']
         self.testnet = self.status['testnet']
@@ -123,29 +122,21 @@ class Status():
         self.uptime = self.status['uptime']
         self.server_timestamp = self.status['server_timestamp']
 
-        #chartable instants
+        # chartable instants
         self.connections = self.status['connections']
         self.threads = self.status['threads']
         self.consensus = self.status['consensus']
         self.consensus_percent = self.status['consensus_percent']
 
-        #non-instants
+        # non-instants
         self.difficulty = self.status['difficulty']
         self.blocks = self.status['blocks']
-
-        #self.diffstatus = socket.get_diff()
-
-        #instants from diffget
-        #self.diff_dropped = self.diffstatus['diff_dropped']
-        #self.time_to_generate = self.diffstatus['time_to_generate']
-        #self.block_time = self.diffstatus['block_time']
-        #self.diff_adjustment = self.diffstatus['diff_adjustment']
-        #self.hashrate = self.diffstatus['hashrate']
-
         return self.status
 
-class History():
+
+class History:
     """saves status calls and the last block range call"""
+
     def __init__(self):
         self.blocks = []
         self.stata = []
@@ -158,9 +149,10 @@ class History():
         if len(self.diffs) >= 50:
             self.diffs = self.diffs[50:]
 
-class DiffCalculator():
+
+class DiffCalculator:
     @staticmethod
-    def calculate(diff_blocks, diff_blocks_minus_1440, block : str, block_minus_1 : str, block_minus_1440 : str):
+    def calculate(diff_blocks, diff_blocks_minus_1440, block: str, block_minus_1: str, block_minus_1440: str):
         try:
             print("Calculating difficulty")
             print("diff_blocks", diff_blocks)
@@ -170,44 +162,56 @@ class DiffCalculator():
             block_minus_1_difficulty = diff_blocks[block_minus_1]["mining_tx"]["difficulty"]
             block_minus_1441_timestamp = diff_blocks_minus_1440[block_minus_1440]["mining_tx"]["difficulty"]
 
-            diff = difficulty(float(last_block_timestamp),float(block_minus_1_timestamp), float(block_minus_1_difficulty),float(block_minus_1441_timestamp))
-            return {block : diff}
+            diff = difficulty(float(last_block_timestamp),
+                              float(block_minus_1_timestamp),
+                              float(block_minus_1_difficulty),
+                              float(block_minus_1441_timestamp))
+
+            return {block: diff}
 
         except Exception as e:
             print(f"issue with {e}")
             raise
 
-class Updater():
+
+class Updater:
     def __init__(self):
         self.status = Status()
         self.history = History()
         self.last_block = 0
 
     def update(self):
-        self.socket = Socket()
+        try:
+            self.socket = Socket()
 
-        new_data = self.status.refresh(self.socket)
+            new_data = self.status.refresh(self.socket)
 
-        self.history.stata.append([new_data])
-        self.last_block = new_data["blocks"]
+            self.history.stata.append([new_data])
+            self.last_block = new_data["blocks"]
 
-        self.history.blocks = json.loads(self.socket.get_getblockrange(self.status.blocks -50, 50))
-        print (self.history.blocks) #last block
+            self.history.blocks = json.loads(self.socket.get_getblockrange(self.status.blocks - 50, 50))
+            print(self.history.blocks)  # last block
 
-        self.history.truncate()
+            self.history.truncate()
 
+            for number in range(-50, 0):
+                # difficulty
 
-        for number in range (-50,0):
-            #difficulty
+                diff_blocks = json.loads(self.socket.get_getblockrange(self.status.blocks + number, 2))  # number is negative
+                diff_blocks_minus_1440 = json.loads(self.socket.get_getblockrange(self.status.blocks - 1440 + number, 1))  # number is negative
 
-            diff_blocks = json.loads(self.socket.get_getblockrange(self.status.blocks + number, 2)) # number is negative
-            diff_blocks_minus_1440 = json.loads(self.socket.get_getblockrange(self.status.blocks - 1440 + number, 1)) # number is negative
+                self.history.diffs.append(DiffCalculator.calculate(diff_blocks, diff_blocks_minus_1440,
+                                                                   str(self.status.blocks + number + 1),
+                                                                   str(self.status.blocks + number),
+                                                                   str(self.status.blocks - 1440 + number)))
+                # /difficulty
 
-            self.history.diffs.append(DiffCalculator.calculate(diff_blocks, diff_blocks_minus_1440, str(self.status.blocks + number + 1), str(self.status.blocks + number), str(self.status.blocks - 1440 + number)))
-            #/difficulty
+            print(self.history.blocks)
+            print(self.history.diffs)
 
-        print(self.history.blocks)
-        print(self.history.diffs)
+        except Exception as e:
+            print(f"An error occured during update, skipping ({e})")
+
 
 if __name__ == "__main__":
     updater = Updater()
