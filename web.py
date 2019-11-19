@@ -146,8 +146,10 @@ class blockdisplayHandler(tornado.web.RequestHandler):
 
         # render
 
+        s = reversed(sorted(self.updater.history.blocks.items()))
+
         self.render("explorer.html",
-                    data=self.updater.history.blocks.items())
+                    data=s)
 
 
 class difficultyHandler(tornado.web.RequestHandler):
