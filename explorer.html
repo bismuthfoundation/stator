@@ -84,8 +84,7 @@
                     <tr><td>Fee: {{transaction['fee']}}</td></tr>
                     <tr><td>Operation: {{transaction['operation']}}</td></tr>
                     <tr><td>Data: {{transaction['openfield']}}</td></tr>
-                    <tr><td>Txid:  <a href="/explorer/txid/{{transaction['txid']}}">{{transaction['txid']}}</a></td></tr>
-
+                    <tr><td>Txid:  <a href="/explorer/txid/{{txid_from_sig(transaction['signature'])}}">{{txid_from_sig(transaction['signature'])}}</a></td></tr>
             {%end%}
 
 

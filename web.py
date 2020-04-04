@@ -6,6 +6,8 @@ import tornado.web
 import threading
 import dator
 
+def txid_from_sig(sig):
+    return sig[:56]
 
 class seekHandler(tornado.web.RequestHandler):
     def initialize(self, updater):
@@ -149,7 +151,7 @@ class blockdisplayHandler(tornado.web.RequestHandler):
         s = reversed(sorted(self.updater.history.blocks.items()))
 
         self.render("explorer.html",
-                    data=s)
+                    data=s, txid_from_sig=txid_from_sig)
 
 
 class difficultyHandler(tornado.web.RequestHandler):
